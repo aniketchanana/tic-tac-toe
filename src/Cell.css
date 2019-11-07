@@ -1,0 +1,12 @@
+.cell{
+    display: inline-block;
+    background: #fff;
+    height: 200px;
+    width: 200px;
+    outline: none;
+    border: none;
+    margin: 2px;
+    font-size: 4rem;
+    color: rgba(0,0,0,0.7);
+    padding: 0;
+}
