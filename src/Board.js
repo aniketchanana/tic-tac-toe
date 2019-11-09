@@ -20,8 +20,11 @@ class Board extends Component{
         this.state = {
             values:val,
             turn:0,
-            gameOver:false
+            gameOver:-1
         }
+        //-1 still playing game
+        //0 win
+        //1 draw
         this.cellClick = this.cellClick.bind(this);
         this.isWinner = this.isWinner.bind(this);
         this.resetBtn = this.resetBtn.bind(this);
@@ -40,7 +43,7 @@ class Board extends Component{
         this.setState({
             values:val,
             turn:0,
-            gameOver:false
+            gameOver:-1
         })
     }
     async cellClick(cellno){
@@ -64,7 +67,7 @@ class Board extends Component{
             if(values[i][0] === values[i][1] && values[i][1] === values[i][2] && values[i][0]!=='' && values[i][1]!=='' && values[i][2]!=='')
             {
                 console.log("row")
-                return true;
+                return 0;
             }
         }
         for(let i=0;i<3;i++)
@@ -72,21 +75,32 @@ class Board extends Component{
             if(values[0][i] === values[1][i] && values[1][i] === values[2][i] && values[0][i]!=='' && values[1][i]!=='' && values[2][i]!=='')
             {
                 console.log("col")
-                return true;
+                return 0;
             }
         }
         if(values[0][0] === values[1][1] && values[1][1] === values[2][2] && values[0][0] !== '' && values[1][1] !== '' && values[2][2] !== '')
         {
             console.log("diagnol")
-            return true;
+            return 0;
         }
-        if(values[0][2] === values[1][1] && values[1][1] === values[2][1] && values[0][2] !== '' && values[1][1] !== '' && values[2][1] !== '')
+        if(values[0][2] === values[1][1] && values[1][1] === values[2][0] && values[0][2] !== '' && values[1][1] !== '' && values[2][1] !== '')
         {
             console.log("diagnol")
-            return true;
+            return 0;
         }
-
-        return false;
+        let count = 0;
+        for(let i=0;i<3;i++)
+        {
+            for(let j=0;j<3;j++)
+            {
+                if(values[i][j] !== '')
+                count++;
+            }
+        }
+        //draw
+        if(count === 9)
+        return 1;
+        return -1;
     }
     render(){
         let cells = [];
@@ -95,19 +109,32 @@ class Board extends Component{
             for(let j=0;j<3;j++)
             cells.push(<Cell value={this.state.values[i][j]} key={`${i}-${j}`} id={`${i}-${j}`} clicked={this.cellClick}/>);
         }
-        let board = <div><h1 className="turn">{this.state.turn === 0?"Turn of X":"Turn of O"}</h1>
+        if(this.state.gameOver===-1)
+        return (
+            <div><h1 className="turn">{this.state.turn === 0?"Turn of X":"Turn of O"}</h1>
         <div className="board">
             {cells}
         </div></div>
-        return(
-            <center>
-                {this.state.gameOver===true?<div>
+        );
+        else if(this.state.gameOver === 0)
+        {
+            return (
+                <div>
                     <h1 className="winner">{this.state.turn === 0?'O ':"X"} is Winner</h1>
                     <br/>
                     <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button>
-                </div>:board}
-            </center>
-        )
+                </div>
+            )
+        }
+        else if(this.state.gameOver === 1){
+            return (
+                <div>
+                    <h1 className="winner">Match is Draw</h1>
+                    <br/>
+                    <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button>
+                </div>
+            )
+        }
     }
 }
 
