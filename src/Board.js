@@ -47,6 +47,8 @@ class Board extends Component{
         })
     }
     async cellClick(cellno){
+        if(this.state.gameOver !== -1)
+        return ;
         let x = cellno[0];
         let y = cellno[1];
         let vals = this.state.values;
@@ -56,51 +58,50 @@ class Board extends Component{
             values:vals,
             turn:t,
         })
-        let win = this.isWinner(this.state.values);
+
+        let gameStatus = this.isWinner(this.state.values);
+
         await this.setState({
-            gameOver:win
+            gameOver:gameStatus
         })
     }
-    isWinner(values){
-        for(let i=0;i<3;i++)
-        {
-            if(values[i][0] === values[i][1] && values[i][1] === values[i][2] && values[i][0]!=='' && values[i][1]!=='' && values[i][2]!=='')
-            {
-                console.log("row")
+    isWinner(feild){
+        // check row wise
+
+        for (let i = 0; i < 3; i++) {
+            if (feild[i][0] === feild[i][1] && feild[i][1] === feild[i][2] && feild[i][0] !== "" && feild[i][1] !== "" && feild[i][2] !== "") {
                 return 0;
             }
         }
-        for(let i=0;i<3;i++)
-        {
-            if(values[0][i] === values[1][i] && values[1][i] === values[2][i] && values[0][i]!=='' && values[1][i]!=='' && values[2][i]!=='')
-            {
-                console.log("col")
+        for (let i = 0; i < 3; i++) {
+            if (feild[0][i] === feild[1][i] && feild[1][i] === feild[2][i] &&  feild[0][i] !== "" && feild[1][i] !== "" && feild[2][i] !== "") {
                 return 0;
             }
         }
-        if(values[0][0] === values[1][1] && values[1][1] === values[2][2] && values[0][0] !== '' && values[1][1] !== '' && values[2][2] !== '')
-        {
-            console.log("diagnol")
+        if (feild[0][0] === feild[1][1] && feild[1][1] === feild[2][2] && feild[0][0] !== "" && feild[1][1] !== "" && feild[2][2] !== "") {
             return 0;
         }
-        if(values[0][2] === values[1][1] && values[1][1] === values[2][0] && values[0][2] !== '' && values[1][1] !== '' && values[2][1] !== '')
-        {
-            console.log("diagnol")
+        if (feild[0][2] === feild[1][1] && feild[1][1] === feild[2][0]  && feild[0][2] !== ""  && feild[1][1] !== ""  && feild[2][0] !== "") {
             return 0;
         }
+
         let count = 0;
         for(let i=0;i<3;i++)
         {
             for(let j=0;j<3;j++)
             {
-                if(values[i][j] !== '')
+                if(feild[i][j] !== "")
                 count++;
             }
         }
-        //draw
+
         if(count === 9)
         return 1;
+
         return -1;
+        //-1 still playing game
+        //0 win
+        //1 draw
     }
     render(){
         let cells = [];
@@ -109,32 +110,27 @@ class Board extends Component{
             for(let j=0;j<3;j++)
             cells.push(<Cell value={this.state.values[i][j]} key={`${i}-${j}`} id={`${i}-${j}`} clicked={this.cellClick}/>);
         }
-        if(this.state.gameOver===-1)
+
+        let winner = <div>
+                        <h1 className="winner">{this.state.turn === 0?'O ':"X"} is Winner <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button></h1>
+                    </div>
+        let draw = <div>
+                        <h1 className="winner">Match is Draw <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button></h1>
+                    </div>
+
+        let turn = <h1 className="turn">{this.state.turn === 0?"Turn of X":"Turn of O"}</h1>
+
         return (
-            <div><h1 className="turn">{this.state.turn === 0?"Turn of X":"Turn of O"}</h1>
-        <div className="board">
-            {cells}
-        </div></div>
+            <center><div>
+                {this.state.gameOver === 0 || this.state.gameOver === 1 ? this.state.gameOver === 0? winner:draw : turn}
+                
+                <div className="boardContainer">
+                    <div className="board">
+                        {cells}
+                    </div>
+                </div>
+            </div></center>
         );
-        else if(this.state.gameOver === 0)
-        {
-            return (
-                <div>
-                    <h1 className="winner">{this.state.turn === 0?'O ':"X"} is Winner</h1>
-                    <br/>
-                    <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button>
-                </div>
-            )
-        }
-        else if(this.state.gameOver === 1){
-            return (
-                <div>
-                    <h1 className="winner">Match is Draw</h1>
-                    <br/>
-                    <button onClick={this.resetBtn} className="btn btn-lg btn-success">Reset</button>
-                </div>
-            )
-        }
     }
 }
 

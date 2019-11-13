@@ -1,11 +1,11 @@
-.cell{
+.board .cell{
     display: inline-block;
     background: #fff;
-    height: 200px;
-    width: 200px;
+    height: 33%;
+    width: 31%;
     outline: none;
     border: none;
-    margin: 2px;
+    margin: 1%;
     font-size: 4rem;
     color: rgba(0,0,0,0.7);
     padding: 0;
